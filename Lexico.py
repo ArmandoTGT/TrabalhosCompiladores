@@ -87,6 +87,10 @@ for simb in entrada:
         new_token = ""
         new_point = ""
 
+    elif simb == "}" and not(coment):
+        string_saida += "ERRO: } " + line + "\n"
+        break
+
     elif not(simb.isalpha()) and not(simb.isdigit()) and simb != "_":
         new_point += simb
 
@@ -116,3 +120,7 @@ else:
 arquivo_saida = open("saida_lexico.txt","w") 
 arquivo_saida.write(string_saida) 
 arquivo_saida.close() 
+
+import pickle
+with open('saida_lexico.pkl', 'wb') as f:
+    pickle.dump(saida, f)
