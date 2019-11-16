@@ -46,7 +46,39 @@ def declaraVars():
 
     if (classificacao[0] == "Identificador"):
         declaraVars()
-def expressao():
+
+def expressao_relacional():
+
+
+def expressao_sinal():
+    if(tokens[0] == "+" or tokens[0] == "-"):
+        retiraPrimeiroLista()
+        expressao_termo()
+
+def expressao_termo():
+    
+
+def expressao_fator():
+    if(classificacao[0] == "Identificador"):
+        retiraPrimeiroLista()
+        if(tokens[0] == "("):
+
+    elif(tokens[0] == "("):
+        retiraPrimeiroLista()
+    
+    elif(tokens[0] == "true" or tokens[0] == "false"):
+        retiraPrimeiroLista()
+    
+    elif(tokens[0] == "not"):
+        retiraPrimeiroLista()
+        expressao_simples()
+
+    elif(classificacao[0] == "Numero Inteiro" or classificacao[0] == "Numero real"):
+        retiraPrimeiroLista()
+    
+    else:
+        print("Erro de Sintaxe: expressão desconhecida", linhas[0])
+        sys.exit(0)
 
 
 def listaParametros():
@@ -59,6 +91,7 @@ def comando():
             retiraPrimeiroLista()
             expressao()
         if(tokens[0] == "("):
+            retiraPrimeiroLista()
             listaParametros()
 
 
