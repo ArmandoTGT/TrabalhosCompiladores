@@ -6,6 +6,7 @@ with open('saida_lexico.pkl', 'rb') as f:
 tokens = []
 classificacao = []
 linhas = []
+parenteses = 0
 for entrada in entradas:
     tokens.append(entrada[0])
     classificacao.append(entrada[1])
@@ -18,6 +19,14 @@ def retiraPrimeiroLista():
     tokens = tokens[1:]
     classificacao = classificacao[1:]
     linhas = linhas[1:]
+
+def botaParenteses():
+    global parenteses
+    parenteses += 1
+
+def tiraParenteses():
+    global parenteses
+    parenteses -= 1
 
 def declaraVars():
     if (classificacao[0] != "Identificador"):
@@ -48,30 +57,37 @@ def declaraVars():
         declaraVars()
 
 def expressao_relacional():
+    expressao_sinal()
 
-
-def expressao_sinal():
+def expressao_sinal():   
     if(tokens[0] == "+" or tokens[0] == "-"):
         retiraPrimeiroLista()
         expressao_termo()
+    else:
+        expressao_termo()
 
 def expressao_termo():
-    
+    expressao_fator()
 
 def expressao_fator():
     if(classificacao[0] == "Identificador"):
         retiraPrimeiroLista()
         if(tokens[0] == "("):
+            retiraPrimeiroLista()
+            listaParametros()
 
     elif(tokens[0] == "("):
         retiraPrimeiroLista()
+        botaParenteses()
+        expressao_relacional()
+        #Faltando analisar esse caso
     
     elif(tokens[0] == "true" or tokens[0] == "false"):
         retiraPrimeiroLista()
     
     elif(tokens[0] == "not"):
         retiraPrimeiroLista()
-        expressao_simples()
+        expressao_fator()
 
     elif(classificacao[0] == "Numero Inteiro" or classificacao[0] == "Numero real"):
         retiraPrimeiroLista()
@@ -80,28 +96,90 @@ def expressao_fator():
         print("Erro de Sintaxe: expressão desconhecida", linhas[0])
         sys.exit(0)
 
+    if(classificacao[0] == "Relacional"):
+        retiraPrimeiroLista()
+        expressao_relacional()
+
+    elif(classificacao[0] == "Operacional"):
+        retiraPrimeiroLista()
+        expressao_sinal()
+    
+    elif(classificacao[0] == "Multiplicador"):
+        retiraPrimeiroLista()
+        expressao_termo()
+    
+    if(tokens[0] == ")"):
+        tiraParenteses()    
+
 
 def listaParametros():
-
+    while(True):
+        expressao_relacional()
+        if(parenteses != 0):
+            print("Erro de Sintaxe: erro nos parenteses", linhas[0])
+            sys.exit(0)
+        if(tokens[0] == ")"):
+            break
+        elif(tokens[0] == ","):
+            pass
+        else:
+            print("Erro de Sintaxe: passagem de parametro errada", linhas[0])
+            sys.exit(0)
 
 def comando():
     if(classificacao[0] == "Identificador"):
         retiraPrimeiroLista()
         if(tokens[0] == ":="):
             retiraPrimeiroLista()
-            expressao()
+            expressao_relacional()
+            if(parenteses != 0):
+                print("Erro de Sintaxe: erro nos parenteses", linhas[0])
+                sys.exit(0)
         if(tokens[0] == "("):
             retiraPrimeiroLista()
             listaParametros()
+        
+        if (tokens[0] != ";"):
+            print("Erro de Sintaxe: ; esperado", linhas[0])
+            sys.exit(0)
 
+        retiraPrimeiroLista()
 
-def comandoComposto():
+    #Estou assumindo qu o begin filho, o if e o while não precisam de ; no final
+
+    elif(tokens[0] == "begin"):
+        retiraPrimeiroLista()            
+        comandoComposto()
+        retiraPrimeiroLista()
+        
+    elif(tokens[0] == "if"):
+        retiraPrimeiroLista()
+        expressao_relacional()
+        if (tokens[0] != "then"):
+            print("Erro de Sintaxe: 'then' esperado depois do if", linhas[0])
+            sys.exit(0)
+        retiraPrimeiroLista()
+        comando()#Chegar isso, de acordo com a linguagem, aqui só pode ter um comando mesmo, checar com o professor
+        if(tokens[0] == "else"):
+            comando()
+        
+    elif(tokens[0] == "while"):
+        retiraPrimeiroLista()
+        expressao_relacional()
+        if (tokens[0] != "do"):
+            print("Erro de Sintaxe: 'do' esperado depois do while", linhas[0])
+            sys.exit(0)
+        retiraPrimeiroLista()
+        comando()#Chegar isso, de acordo com a linguagem, aqui só pode ter um comando mesmo, checar com o professor
     
-    comando()
 
-    if (tokens[0] != "end"):       
+def comandoComposto():  
+
+    if (tokens[0] != "end"):
+        comando()         
         comandoComposto()
 
+    
 
 def programa():
     if (tokens[0] != "program"):
@@ -117,7 +195,7 @@ def programa():
     retiraPrimeiroLista()
 
     if (tokens[0] != ";"):
-        print("Erro de Sintaxe: depois de 'program' deve vim um indentificador", linhas[0])
+        print("Erro de Sintaxe: ; esperado", linhas[0])
         sys.exit(0)
 
     retiraPrimeiroLista()
@@ -129,13 +207,15 @@ def programa():
         if(tokens[0] == "procedure"):
             retiraPrimeiroLista()
             #subProgramas()
+            #são realmente como de fossem programas completos, adicionando os argumentos
         if(tokens[0] == "begin"):
-            retiraPrimeiroLista()
-            print("Chegou")
+            retiraPrimeiroLista()            
             comandoComposto()
+            retiraPrimeiroLista()                   
         else:
             print("Erro de Sintaxe: comando não reconhecido", linhas[0])
             sys.exit(0)
 
 programa()
+retiraPrimeiroLista()
 print(tokens)
