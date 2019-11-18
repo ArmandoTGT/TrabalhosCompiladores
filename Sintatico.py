@@ -13,6 +13,7 @@ for entrada in entradas:
     linhas.append(entrada[2])
 
 def retiraPrimeiroLista():
+
     global tokens
     global classificacao
     global linhas 
@@ -21,22 +22,31 @@ def retiraPrimeiroLista():
     linhas = linhas[1:]
 
 def botaParenteses():
+
     global parenteses
     parenteses += 1
 
 def tiraParenteses():
+
     global parenteses
     parenteses -= 1
 
 def declaraVars():
-    if (classificacao[0] != "Identificador"):
-        print("Erro de Sintaxe: indentificador esperado", linhas[0])
-        sys.exit(0)
 
-    retiraPrimeiroLista()
+    while(True):
+        if (classificacao[0] != "Identificador"):
+            print("Erro de Sintaxe: indentificador esperado", linhas[0])
+            sys.exit(0)
+
+        retiraPrimeiroLista()
+
+        if(tokens[0] == ","):
+            retiraPrimeiroLista()
+            continue
+        break
 
     if (tokens[0] != ":"):
-        print("Erro de Sintaxe: delimitado : esperado", linhas[0])
+        print("Erro de Sintaxe: delimitador : esperado", linhas[0])
         sys.exit(0)
 
     retiraPrimeiroLista()        
@@ -57,9 +67,11 @@ def declaraVars():
         declaraVars()
 
 def expressao_relacional():
+
     expressao_sinal()
 
 def expressao_sinal():   
+
     if(tokens[0] == "+" or tokens[0] == "-"):
         retiraPrimeiroLista()
         expressao_termo()
@@ -67,9 +79,11 @@ def expressao_sinal():
         expressao_termo()
 
 def expressao_termo():
+
     expressao_fator()
 
 def expressao_fator():
+
     if(classificacao[0] == "Identificador"):
         retiraPrimeiroLista()
         if(tokens[0] == "("):
@@ -113,6 +127,7 @@ def expressao_fator():
 
 
 def listaParametros():
+
     while(True):
         expressao_relacional()
         if(parenteses != 0):
@@ -121,12 +136,13 @@ def listaParametros():
         if(tokens[0] == ")"):
             break
         elif(tokens[0] == ","):
-            pass
+            continue
         else:
             print("Erro de Sintaxe: passagem de parametro errada", linhas[0])
             sys.exit(0)
 
 def comando():
+
     if(classificacao[0] == "Identificador"):
         retiraPrimeiroLista()
         if(tokens[0] == ":="):
@@ -179,9 +195,85 @@ def comandoComposto():
         comando()         
         comandoComposto()
 
+def argumentos():
+
+    while(True):
+        if (classificacao[0] != "Identificador"):
+            print("Erro de Sintaxe: indentificador esperado", linhas[0])
+            sys.exit(0)
+
+        retiraPrimeiroLista()
+        
+        if(tokens[0] == ","):
+            retiraPrimeiroLista()
+            continue
+        break
+
+    if (tokens[0] != ":"):
+        print("Erro de Sintaxe: delimitado : esperado", linhas[0])
+        sys.exit(0)
+
+    retiraPrimeiroLista()        
+
+    if (tokens[0] != "integer" and tokens[0] != "real" and tokens[0] != "boolean"):
+        print("Erro de Sintaxe: declaração de tipo esperado", linhas[0])
+        sys.exit(0)
+
+    retiraPrimeiroLista()  
+
+    if (tokens[0] == ";"):
+        retiraPrimeiroLista()
+        argumentos()
+    
+    if(tokens[0] != ")"):
+        print("Erro de Sintaxe: parenteses aberto de não fechado", linhas[0])
+        sys.exit(0)
+    
+    retiraPrimeiroLista() 
+
+
+def subProgramas():
+
+    if (classificacao[0] != "Identificador"):
+        print("Erro de Sintaxe: depois de 'procedure' deve vim um indentificador", linhas[0])
+        sys.exit(0)
+
+    retiraPrimeiroLista()
+
+    if(tokens[0] == "("):
+        retiraPrimeiroLista()
+        argumentos()
+
+    if (tokens[0] != ";"):
+        print("Erro de Sintaxe: ; esperado", linhas[0])
+        sys.exit(0)
+
+    retiraPrimeiroLista()
+    corpoPrograma()
+    
+def corpoPrograma():
+
+    while(tokens[0] != "."):
+        if(tokens[0] == "var"):
+            retiraPrimeiroLista()
+            declaraVars()
+        if(tokens[0] == "procedure"):
+            retiraPrimeiroLista()
+            subProgramas()
+            #são realmente como de fossem programas completos, adicionando os argumentos
+        if(tokens[0] == "begin"):
+            retiraPrimeiroLista()            
+            comandoComposto()
+            retiraPrimeiroLista()
+            break                
+        else:
+            print("Erro de Sintaxe: comando não reconhecido", linhas[0])
+            sys.exit(0)
+
     
 
 def programa():
+
     if (tokens[0] != "program"):
         print("Erro de Sintaxe: 'program' deve se a primeira palavra", linhas[0])
         sys.exit(0)
@@ -200,21 +292,9 @@ def programa():
 
     retiraPrimeiroLista()
 
-    while(tokens[0] != "."):
-        if(tokens[0] == "var"):
-            retiraPrimeiroLista()
-            declaraVars()
-        if(tokens[0] == "procedure"):
-            retiraPrimeiroLista()
-            #subProgramas()
-            #são realmente como de fossem programas completos, adicionando os argumentos
-        if(tokens[0] == "begin"):
-            retiraPrimeiroLista()            
-            comandoComposto()
-            retiraPrimeiroLista()                   
-        else:
-            print("Erro de Sintaxe: comando não reconhecido", linhas[0])
-            sys.exit(0)
+    corpoPrograma()
+
+    
 
 programa()
 retiraPrimeiroLista()

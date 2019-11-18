@@ -1,6 +1,6 @@
 program teste; {programa exemplo}
 var
-    valor1: integer;
+    valor1, valor: integer;
     valor2: real;
     valor_T: real;
 begin
