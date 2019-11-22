@@ -1,0 +1,9 @@
+program teste; {programa exemplo}
+var
+    valor1, valor: integer;
+    valor2: real;
+    valor_T: real;
+begin
+    valor1:=(10+0.1*2)/3.5;
+    valor2 := 0.1;
+end.

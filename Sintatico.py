@@ -58,7 +58,7 @@ def declaraVars():
     retiraPrimeiroLista()  
 
     if (tokens[0] != ";"):
-        print("Erro de Sintaxe: delimitado ; esperado", linhas[0])
+        print("Erro de Sintaxe: delimitado ; esperado cod:1", linhas[0])
         sys.exit(0)
 
     retiraPrimeiroLista() 
@@ -83,6 +83,7 @@ def expressao_termo():
     expressao_fator()
 
 def expressao_fator():
+    #print(tokens)
 
     if(classificacao[0] == "Identificador"):
         retiraPrimeiroLista()
@@ -90,11 +91,11 @@ def expressao_fator():
             retiraPrimeiroLista()
             listaParametros()
 
-    elif(tokens[0] == "("):
+    elif(tokens[0] == "("):        
         retiraPrimeiroLista()
-        botaParenteses()
-        expressao_relacional()
-        #Faltando analisar esse caso
+        botaParenteses()        
+        expressao_relacional()        
+        
     
     elif(tokens[0] == "true" or tokens[0] == "false"):
         retiraPrimeiroLista()
@@ -122,9 +123,9 @@ def expressao_fator():
         retiraPrimeiroLista()
         expressao_termo()
     
-    if(tokens[0] == ")"):
+    if(tokens[0] == ")" and parenteses > 0):
+        retiraPrimeiroLista()         
         tiraParenteses()    
-
 
 def listaParametros():
 
@@ -134,8 +135,10 @@ def listaParametros():
             print("Erro de Sintaxe: erro nos parenteses", linhas[0])
             sys.exit(0)
         if(tokens[0] == ")"):
+            retiraPrimeiroLista()
             break
         elif(tokens[0] == ","):
+            retiraPrimeiroLista()
             continue
         else:
             print("Erro de Sintaxe: passagem de parametro errada", linhas[0])
@@ -149,14 +152,16 @@ def comando():
             retiraPrimeiroLista()
             expressao_relacional()
             if(parenteses != 0):
-                print("Erro de Sintaxe: erro nos parenteses", linhas[0])
+                print("Erro de Sintaxe: erro nos parenteses cod:1", linhas[0])
                 sys.exit(0)
-        if(tokens[0] == "("):
+        elif(tokens[0] == "("):
             retiraPrimeiroLista()
             listaParametros()
-        
+
+
+
         if (tokens[0] != ";"):
-            print("Erro de Sintaxe: ; esperado", linhas[0])
+            print("Erro de Sintaxe: ; esperado cod:2", linhas[0])
             sys.exit(0)
 
         retiraPrimeiroLista()
@@ -177,6 +182,7 @@ def comando():
         retiraPrimeiroLista()
         comando()#Chegar isso, de acordo com a linguagem, aqui só pode ter um comando mesmo, checar com o professor
         if(tokens[0] == "else"):
+            retiraPrimeiroLista()
             comando()
         
     elif(tokens[0] == "while"):
@@ -188,8 +194,9 @@ def comando():
         retiraPrimeiroLista()
         comando()#Chegar isso, de acordo com a linguagem, aqui só pode ter um comando mesmo, checar com o professor
     
-
 def comandoComposto():  
+
+    #print(tokens)
 
     if (tokens[0] != "end"):
         comando()         
@@ -231,7 +238,6 @@ def argumentos():
     
     retiraPrimeiroLista() 
 
-
 def subProgramas():
 
     if (classificacao[0] != "Identificador"):
@@ -245,7 +251,7 @@ def subProgramas():
         argumentos()
 
     if (tokens[0] != ";"):
-        print("Erro de Sintaxe: ; esperado", linhas[0])
+        print("Erro de Sintaxe: ; esperado cod:3", linhas[0])
         sys.exit(0)
 
     retiraPrimeiroLista()
@@ -257,11 +263,11 @@ def corpoPrograma():
         if(tokens[0] == "var"):
             retiraPrimeiroLista()
             declaraVars()
-        if(tokens[0] == "procedure"):
+        elif(tokens[0] == "procedure"):
             retiraPrimeiroLista()
             subProgramas()
             #são realmente como de fossem programas completos, adicionando os argumentos
-        if(tokens[0] == "begin"):
+        elif(tokens[0] == "begin"):
             retiraPrimeiroLista()            
             comandoComposto()
             retiraPrimeiroLista()
@@ -269,8 +275,6 @@ def corpoPrograma():
         else:
             print("Erro de Sintaxe: comando não reconhecido", linhas[0])
             sys.exit(0)
-
-    
 
 def programa():
 
@@ -287,14 +291,13 @@ def programa():
     retiraPrimeiroLista()
 
     if (tokens[0] != ";"):
-        print("Erro de Sintaxe: ; esperado", linhas[0])
+        print("Erro de Sintaxe: ; esperado cod:3", linhas[0])
         sys.exit(0)
 
     retiraPrimeiroLista()
 
     corpoPrograma()
 
-    
 
 programa()
 retiraPrimeiroLista()

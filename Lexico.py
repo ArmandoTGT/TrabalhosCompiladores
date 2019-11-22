@@ -4,6 +4,7 @@ relacionais = ["=", "<", ">", "<=", ">=", "<>"]
 oparecionais = ["+", "-", "or"]
 multiplicativos = ["*", "/", "and"]
 delemitadores = [";", ":", "(", ")", ".", ","]
+pontosJuntos = [":=", "+", "-", "*", "/", "=", "<", ">", "<=", ">=", "<>", ":", "(", ")", ","]
 
 f = open("entrada.txt", "r")
 entrada = f.read()
@@ -56,7 +57,7 @@ for simb in entrada:
             new_point = ""
 
 
-    elif simb == "\n" or simb == "\t":
+    elif simb == "\n" or simb == ";":
 
         if new_token != "" and not(coment):
             ClassificaToken(new_token)
@@ -66,7 +67,12 @@ for simb in entrada:
             ClassificaPoint(new_point)
             new_point = ""       
 
-        line += 1
+        if simb == ";" and not(coment):
+            ClassificaPoint(simb)
+        elif simb == ";" and coment:
+            continue
+        else:
+            line += 1
     
     elif simb == "{":
         
@@ -91,14 +97,39 @@ for simb in entrada:
         string_saida += "ERRO: } " + line + "\n"
         break
 
-    elif not(simb.isalpha()) and not(simb.isdigit()) and simb != "_":
+    elif not(simb.isalpha()) and not(simb.isdigit()) and simb != "_" and not(coment):
+
+        if simb == "(" or simb == ")":
+            if new_token != "":
+                ClassificaToken(new_token)
+                new_token = ""           
+            ClassificaPoint(new_point)
+            new_point = ""
+
         new_point += simb
 
-    else:
-        if new_point != "":
-           new_token += new_point
-           new_point = "" 
+        if new_point == "(" or new_point == ")":
+            if new_token != "":
+                ClassificaToken(new_token)
+                new_token = ""
+            ClassificaPoint(new_point)
+            new_point = ""
+
+    else: 
+        if new_point == ".":
+            if new_token == "":
+                ClassificaPoint(new_point)
+                new_point = ""
+            new_token += new_point
+            new_point = ""
+        if(pontosJuntos.__contains__(new_point)):
+            if new_token != "":
+                ClassificaToken(new_token)
+                new_token = ""
+            ClassificaPoint(new_point)
+            new_point = ""
         new_token += simb
+
 
 if new_token != "":
     ClassificaToken(new_token)

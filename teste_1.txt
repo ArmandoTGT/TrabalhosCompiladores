@@ -16,24 +16,17 @@ procedure sum_n_times (number, n: integer);
         {Iniciamos um while que vai executar até o valor de "n" ser 0}
         count :=1;
         while count <= n do
-            begin
+            
 
                 {Caso o valor de number seja diferente de 0}
-                if (number <> 0) then begin
+                if (number <> 0) then
 
-                        total := total + number;
-                        number := number - 1;
-                        count :=count + 1;
-
-                    end
+                    number := number - 1;
 
                 else {Caso number tenha sido zerado, vamos reiniciar ele.}
-                    begin
-                       number:= aux;
-                    end
-            end
+                    count := n;
 
-        number := total;
+        number := number * number;
     end
 
 {Main/;/;/}
