@@ -37,7 +37,7 @@ procedure sum_n_times (number, n: integer);
     end
 
 {Main/;/;/}
-var x, y: integer;
+{var x, y: integer; isso por de ser usado depois}
 {Inicio do programa}begin
     {...}
     x:= 5;

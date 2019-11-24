@@ -7,6 +7,7 @@ tokens = []
 classificacao = []
 linhas = []
 parenteses = 0
+
 for entrada in entradas:
     tokens.append(entrada[0])
     classificacao.append(entrada[1])
@@ -258,23 +259,24 @@ def subProgramas():
     corpoPrograma()
     
 def corpoPrograma():
-
-    while(tokens[0] != "."):
-        if(tokens[0] == "var"):
-            retiraPrimeiroLista()
-            declaraVars()
-        elif(tokens[0] == "procedure"):
+    #Caso queria deixar com declaração de vars em todo lugar só voltar pra forma de shile de antes, procure nas versões do git
+    if(tokens[0] == "var"):
+        retiraPrimeiroLista()
+        declaraVars()
+    while(True):
+        if(tokens[0] == "procedure"):
             retiraPrimeiroLista()
             subProgramas()
             #são realmente como de fossem programas completos, adicionando os argumentos
-        elif(tokens[0] == "begin"):
-            retiraPrimeiroLista()            
-            comandoComposto()
-            retiraPrimeiroLista()
-            break                
         else:
-            print("Erro de Sintaxe: comando não reconhecido", linhas[0])
-            sys.exit(0)
+            break
+    if(tokens[0] == "begin"):
+        retiraPrimeiroLista()            
+        comandoComposto()
+        retiraPrimeiroLista()                        
+    else:
+        print("Erro de Sintaxe: comando não reconhecido", linhas[0])
+        sys.exit(0)
 
 def programa():
 
