@@ -6,12 +6,45 @@ with open('saida_lexico.pkl', 'rb') as f:
 tokens = []
 classificacao = []
 linhas = []
+indentificadores = []
 parenteses = 0
 
 for entrada in entradas:
     tokens.append(entrada[0])
     classificacao.append(entrada[1])
     linhas.append(entrada[2])
+
+def tiraIndentAteMarca():
+    while(indentificadores[0][0] != "$"):
+        indentificadores.pop(0)
+    indentificadores.pop(0)
+
+def botaIndent(entrada):
+    indentificadores.insert(0, entrada)
+
+def checaSeIndentPodeSerDeclarado(checando):
+    indents = []
+
+    for el in indentificadores: 
+        if(el[0] == "$"): 
+            break
+        else:
+            indents.append(el[0])
+
+    if(indents.__contains__(checando)):
+        print("Indentificador declarada anteriormente nesse escopo", linhas[0])
+        sys.exit(0)
+
+
+def checaSeIndentExisteERetorna(checando):
+
+    for el in indentificadores: 
+        if(el[0] == checando): 
+            return el
+    
+    print("Indentificador não existe", linhas[0])
+    sys.exit(0)
+
 
 def retiraPrimeiroLista():
 
@@ -33,12 +66,18 @@ def tiraParenteses():
     parenteses -= 1
 
 def declaraVars():
-
+    aux = []
     while(True):
         if (classificacao[0] != "Identificador"):
             print("Erro de Sintaxe: indentificador esperado", linhas[0])
             sys.exit(0)
 
+        if (aux.__contains__(tokens[0])):
+            print("Indentificador ja utilizada nessa mesma linha", linhas[0])
+            sys.exit(0)
+        checaSeIndentPodeSerDeclarado(tokens[0])
+
+        aux.append(tokens[0])
         retiraPrimeiroLista()
 
         if(tokens[0] == ","):
@@ -56,12 +95,16 @@ def declaraVars():
         print("Erro de Sintaxe: declaração de tipo esperado", linhas[0])
         sys.exit(0)
 
+    for indet in aux:
+        botaIndent([indet, tokens[0]])
+
     retiraPrimeiroLista()  
 
     if (tokens[0] != ";"):
         print("Erro de Sintaxe: delimitado ; esperado cod:1", linhas[0])
         sys.exit(0)
 
+    aux = []
     retiraPrimeiroLista() 
 
     if (classificacao[0] == "Identificador"):
@@ -204,12 +247,21 @@ def comandoComposto():
         comandoComposto()
 
 def argumentos():
-
+    
+    auxArg = []
     while(True):
         if (classificacao[0] != "Identificador"):
             print("Erro de Sintaxe: indentificador esperado", linhas[0])
             sys.exit(0)
 
+        
+
+        if (auxArg.__contains__(tokens[0])):
+            print("Indentificador ja utilizada nessa mesma linha", linhas[0])
+            sys.exit(0)
+        checaSeIndentPodeSerDeclarado(tokens[0])
+
+        auxArg.append(tokens[0])
         retiraPrimeiroLista()
         
         if(tokens[0] == ","):
@@ -227,8 +279,12 @@ def argumentos():
         print("Erro de Sintaxe: declaração de tipo esperado", linhas[0])
         sys.exit(0)
 
+    for indet in auxArg:
+        botaIndent([indet, tokens[0]])
+
     retiraPrimeiroLista()  
 
+    auxArg = []
     if (tokens[0] == ";"):
         retiraPrimeiroLista()
         argumentos()
@@ -245,6 +301,10 @@ def subProgramas():
         print("Erro de Sintaxe: depois de 'procedure' deve vim um indentificador", linhas[0])
         sys.exit(0)
 
+    checaSeIndentPodeSerDeclarado(tokens[0])
+
+    botaIndent([tokens[0], "procedure"])
+    botaIndent(["$", "mark"])
     retiraPrimeiroLista()
 
     if(tokens[0] == "("):
@@ -257,6 +317,7 @@ def subProgramas():
 
     retiraPrimeiroLista()
     corpoPrograma()
+    tiraIndentAteMarca()
     
 def corpoPrograma():
     #Caso queria deixar com declaração de vars em todo lugar só voltar pra forma de shile de antes, procure nas versões do git
@@ -264,7 +325,7 @@ def corpoPrograma():
         retiraPrimeiroLista()
         declaraVars()
     while(True):
-        if(tokens[0] == "procedure"):
+        if(tokens[0] == "procedure"):            
             retiraPrimeiroLista()
             subProgramas()
             #são realmente como de fossem programas completos, adicionando os argumentos
@@ -290,6 +351,7 @@ def programa():
         print("Erro de Sintaxe: depois de 'program' deve vim um indentificador", linhas[0])
         sys.exit(0)
 
+    botaIndent([tokens[0], "program"])
     retiraPrimeiroLista()
 
     if (tokens[0] != ";"):
@@ -304,3 +366,4 @@ def programa():
 programa()
 retiraPrimeiroLista()
 print(tokens)
+print(indentificadores)

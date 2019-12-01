@@ -2,6 +2,8 @@
 
 program{...Comentário;...}teste;
 
+var x, y: integer; {isso por de ser usado depois}
+
 {Função que vai decrementando um número enquanto soma 
 ele "n" vezes; Caso o número chegue a 0, nós vamos resetar
 o número e continuar a decrementar e somar.}
@@ -37,7 +39,6 @@ procedure sum_n_times (number, n: integer);
     end
 
 {Main/;/;/}
-{var x, y: integer; isso por de ser usado depois}
 {Inicio do programa}begin
     {...}
     x:= 5;
