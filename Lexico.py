@@ -25,6 +25,10 @@ def ClassificaToken( new_token ):
         saida.append([ new_token, "Numero real", line])
     elif reservadas.__contains__(new_token):
         saida.append([ new_token, "Palavra reservada", line])
+    elif new_token == "and":
+        saida.append([ new_token, "Multiplicador", line])
+    elif new_token == "or":
+        saida.append([ new_token, "Operacional", line])
     else:
         saida.append([ new_token, "Identificador", line])
 
@@ -39,7 +43,7 @@ def ClassificaPoint( new_point ):
          saida.append([ new_point, "Multiplicador", line])
     elif delemitadores.__contains__(new_point):
          saida.append([ new_point, "Delimitador", line])
-    else:        
+    else:
         sinal_desconhecido = True
         linha_erro_simb = line
 
@@ -65,7 +69,7 @@ for simb in entrada:
 
         if new_point != "" and not(coment):
             ClassificaPoint(new_point)
-            new_point = ""       
+            new_point = ""
 
         if simb == ";" and not(coment):
             ClassificaPoint(simb)
@@ -73,9 +77,9 @@ for simb in entrada:
             continue
         else:
             line += 1
-    
+
     elif simb == "{":
-        
+
         if new_token != "" and not(coment):
             ClassificaToken(new_token)
             new_token = ""
@@ -83,10 +87,10 @@ for simb in entrada:
         if new_point != "" and not(coment):
             ClassificaPoint(new_point)
             new_point = ""
-        
+
         linha_erro_coment = line
         coment = True
-        
+
 
     elif simb == "}" and coment:
         coment = False
@@ -102,7 +106,7 @@ for simb in entrada:
         if simb == "(" or simb == ")":
             if new_token != "":
                 ClassificaToken(new_token)
-                new_token = ""           
+                new_token = ""
             ClassificaPoint(new_point)
             new_point = ""
 
@@ -115,7 +119,7 @@ for simb in entrada:
             ClassificaPoint(new_point)
             new_point = ""
 
-    else: 
+    else:
         if new_point == ".":
             if new_token == "":
                 ClassificaPoint(new_point)
@@ -148,9 +152,9 @@ else:
     for s in saida:
        string_saida += (str(s) + "\n")
 
-arquivo_saida = open("saida_lexico.txt","w") 
-arquivo_saida.write(string_saida) 
-arquivo_saida.close() 
+arquivo_saida = open("saida_lexico.txt","w")
+arquivo_saida.write(string_saida)
+arquivo_saida.close()
 
 import pickle
 with open('saida_lexico.pkl', 'wb') as f:
