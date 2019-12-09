@@ -1,6 +1,6 @@
 {Teste de Código}
 
-program{...Comentário;...}teste;
+program{...Comentário;...}teste
 
 var x, y: integer; {isso por de ser usado depois}
 

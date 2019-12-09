@@ -8,6 +8,7 @@ classificacao = []
 linhas = []
 indentificadores = []
 valida_tipo = []
+functionsEProcedures = {}
 parenteses = 0
 
 for entrada in entradas:
@@ -710,11 +711,21 @@ def subProgramas():
 
     botaIndent([tokens[0], "procedure"])
     botaIndent(["$", "mark"])
+    nomeProcedure = tokens[0]
     retiraPrimeiroLista()
 
     if(tokens[0] == "("):
         retiraPrimeiroLista()
         argumentos()
+
+    tipoArgumentos = []
+    for argumento in indentificadores:
+        if argumento[0] == "$":
+            break
+        else:
+            tipoArgumentos.append(argumento[1])
+            
+    functionsEProcedures[nomeProcedure] = tipoArgumentos
 
     if (tokens[0] != ";"):
         print("Erro de Sintaxe: ; esperado cod:3", linhas[0])
@@ -741,6 +752,16 @@ def subProgramasFunction():
     if(tokens[0] == "("):
         retiraPrimeiroLista()
         argumentos()
+
+    tipoArgumentos = []
+    for argumento in indentificadores:
+        if argumento[0] == "$":
+            break
+        else:
+            tipoArgumentos.append(argumento[1])
+            
+    functionsEProcedures[nomeDaFunction] = tipoArgumentos
+
 
     if (tokens[0] != ":"):
         print("Erro de Sintaxe: : esperado cod:4", linhas[0])
@@ -805,9 +826,9 @@ def programa():
 
     botaIndent([tokens[0], "program"])
     retiraPrimeiroLista()
-
+    
     if (tokens[0] != ";"):
-        print("Erro de Sintaxe: ; esperado cod:3", linhas[0])
+        print("Erro de Sintaxe: ; esperado cod:5", linhas[0])
         sys.exit(0)
 
     retiraPrimeiroLista()
@@ -819,3 +840,4 @@ programa()
 retiraPrimeiroLista()
 print(tokens)
 print(indentificadores)
+print(functionsEProcedures)
