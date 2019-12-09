@@ -28,7 +28,7 @@ def ClassificaToken( new_token ):
     elif new_token == "and":
         saida.append([ new_token, "Multiplicador", line])
     elif new_token == "or":
-        saida.append([ new_token, "Operacional", line])       
+        saida.append([ new_token, "Operacional", line])
     elif new_token == "true" or new_token == "false":
         saida.append([ new_token, "Booleano", line])
     else:

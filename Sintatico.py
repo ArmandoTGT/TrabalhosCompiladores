@@ -173,6 +173,10 @@ def validaExpressao(expressaoTipadaArr):
             if ((expressaoValidada[count] == "procedure") | (expressaoValidada[count] == "function")):
                 return "procedimento"
 
+            if (expressaoValidada[count] == "program"):
+                print("Identificador do 'program' não pode ser usado no 'program'", linhas[0])
+                sys.exit(0)
+
             if ((expressaoValidada[count] in simbolos_logicos) & (not simb_logico)):
                 simb_logico = True
                 if (expressaoValidada[count] in simbolos_and_or):
@@ -730,7 +734,7 @@ def subProgramasFunction():
     checaSeIndentPodeSerDeclarado(tokens[0])
 
     botaIndent([tokens[0], "function"])
-    nomeDaFunction = tokens[0] 
+    nomeDaFunction = tokens[0]
     botaIndent(["$", "mark"])
     retiraPrimeiroLista()
 
@@ -741,14 +745,14 @@ def subProgramasFunction():
     if (tokens[0] != ":"):
         print("Erro de Sintaxe: : esperado cod:4", linhas[0])
         sys.exit(0)
-    
+
     retiraPrimeiroLista()
 
     if (tokens[0] != "integer" and tokens[0] != "real" and tokens[0] != "boolean"):
         print("Erro de Sintaxe: declaração de tipo de retorno esperado", linhas[0])
         sys.exit(0)
 
-    
+
     for indentificador in indentificadores:
         if indentificador[0] == nomeDaFunction:
             indentificador[1] = tokens[0]
@@ -762,7 +766,7 @@ def subProgramasFunction():
     retiraPrimeiroLista()
     corpoPrograma()
     tiraIndentAteMarca()
-    
+
 
 def corpoPrograma():
     #Caso queria deixar com declaração de vars em todo lugar só voltar pra forma de shile de antes, procure nas versões do git
