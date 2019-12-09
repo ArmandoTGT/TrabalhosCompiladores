@@ -7,9 +7,23 @@ var x, y: integer; {isso por de ser usado depois}
 {Função que vai decrementando um número enquanto soma
 ele "n" vezes; Caso o número chegue a 0, nós vamos resetar
 o número e continuar a decrementar e somar.}
+function fatorial(n: integer): integer;
+   
+    begin
+        if n > 1 then
+            x := n * fatorial(n-1);
+        else
+            x := 1;
+
+        fatorial := x;
+    end
+
 procedure sum_n_times (number, n: integer);
 
-    var aux, count, total: integer;{Variável que vai guardar o total da soma}
+    var 
+        aux, count, total: integer;
+        aux2, count2, total2: real;
+        varBollean: boolean; {Variável que vai guardar o total da soma}
 
     begin {Passamos o valor do número para a auxiliar}
         aux := number;
@@ -26,7 +40,7 @@ procedure sum_n_times (number, n: integer);
                 {teste}
                 {if ((((number <> 0) and (number + 0)))) then begin}
 
-                        total := total + number - (total * total + number) / (aux * 2 - 5) + (number);
+                        total := fatorial(total) + number - (total * total + number) / (aux * 2 - 5) + (number);
 
                         {teste}
                         {total := total + number - (total >= number) / (aux * 2 - 5) + (number);}

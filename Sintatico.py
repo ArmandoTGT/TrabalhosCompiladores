@@ -720,6 +720,50 @@ def subProgramas():
     corpoPrograma()
     tiraIndentAteMarca()
 
+
+def subProgramasFunction():
+
+    if (classificacao[0] != "Identificador"):
+        print("Erro de Sintaxe: depois de 'procedure' deve vim um indentificador", linhas[0])
+        sys.exit(0)
+
+    checaSeIndentPodeSerDeclarado(tokens[0])
+
+    botaIndent([tokens[0], "function"])
+    nomeDaFunction = tokens[0] 
+    botaIndent(["$", "mark"])
+    retiraPrimeiroLista()
+
+    if(tokens[0] == "("):
+        retiraPrimeiroLista()
+        argumentos()
+
+    if (tokens[0] != ":"):
+        print("Erro de Sintaxe: : esperado cod:4", linhas[0])
+        sys.exit(0)
+    
+    retiraPrimeiroLista()
+
+    if (tokens[0] != "integer" and tokens[0] != "real" and tokens[0] != "boolean"):
+        print("Erro de Sintaxe: declaração de tipo de retorno esperado", linhas[0])
+        sys.exit(0)
+
+    
+    for indentificador in indentificadores:
+        if indentificador[0] == nomeDaFunction:
+            indentificador[1] = tokens[0]
+
+    retiraPrimeiroLista()
+
+    if (tokens[0] != ";"):
+        print("Erro de Sintaxe: ; esperado cod:3", linhas[0])
+        sys.exit(0)
+
+    retiraPrimeiroLista()
+    corpoPrograma()
+    tiraIndentAteMarca()
+    
+
 def corpoPrograma():
     #Caso queria deixar com declaração de vars em todo lugar só voltar pra forma de shile de antes, procure nas versões do git
     if(tokens[0] == "var"):
@@ -730,6 +774,9 @@ def corpoPrograma():
             retiraPrimeiroLista()
             subProgramas()
             #são realmente como de fossem programas completos, adicionando os argumentos
+        if(tokens[0] == "function"):
+            retiraPrimeiroLista()
+            subProgramasFunction()
         else:
             break
     if(tokens[0] == "begin"):

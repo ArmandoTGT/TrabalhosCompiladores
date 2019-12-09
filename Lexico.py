@@ -1,5 +1,5 @@
 reservadas = ["program", "var", "integer", "real", "boolean", "procedure", "begin",
-"end", "if", "then", "else", "while", "do", "not"]
+"end", "if", "then", "else", "while", "do", "not", "function"]
 relacionais = ["=", "<", ">", "<=", ">=", "<>"]
 oparecionais = ["+", "-", "or"]
 multiplicativos = ["*", "/", "and"]
@@ -28,7 +28,9 @@ def ClassificaToken( new_token ):
     elif new_token == "and":
         saida.append([ new_token, "Multiplicador", line])
     elif new_token == "or":
-        saida.append([ new_token, "Operacional", line])
+        saida.append([ new_token, "Operacional", line])       
+    elif new_token == "true" or new_token == "false":
+        saida.append([ new_token, "Booleano", line])
     else:
         saida.append([ new_token, "Identificador", line])
 
